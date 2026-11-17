@@ -1,5 +1,5 @@
 const topicNumber=Number(new URLSearchParams(location.search).get('topic')||1);
-const ACTIVE_TASKS=topicNumber===8?TASKS8:topicNumber===7?TASKS7:topicNumber===6?TASKS6:topicNumber===5?TASKS5:topicNumber===4?TASKS4:topicNumber===3?TASKS3:topicNumber===2?TASKS2:TASKS;
+const ACTIVE_TASKS=topicNumber===12?TASKS12:topicNumber===11?TASKS11:topicNumber===10?TASKS10:topicNumber===9?TASKS9:topicNumber===8?TASKS8:topicNumber===7?TASKS7:topicNumber===6?TASKS6:topicNumber===5?TASKS5:topicNumber===4?TASKS4:topicNumber===3?TASKS3:topicNumber===2?TASKS2:TASKS;
 const STORE_SUFFIX='-topic'+topicNumber;
 let selected=0, busy=false;const $=id=>document.getElementById(id);const saved=()=>{try{return JSON.parse(localStorage.getItem('buch-solutions-v1'+STORE_SUFFIX)||'{}')}catch{return {}}};const completed=()=>{try{return JSON.parse(localStorage.getItem('buch-completed-v1'+STORE_SUFFIX)||'{}')}catch{return {}}};const setStorage=(key,obj)=>{try{localStorage.setItem(key,JSON.stringify(obj))}catch{}};
 function renderMenu(){const c=completed();$('taskMenu').innerHTML='';ACTIVE_TASKS.forEach((t,i)=>{const b=document.createElement('button');b.className='taskmenuitem '+(selected===i?'active':'');b.textContent=`${c[t.id]?'✓':'○'}  ${i+1}. ${t.name}`;b.onclick=()=>select(i);$('taskMenu').append(b)});const n=ACTIVE_TASKS.filter(t=>c[t.id]).length;$('progressFill').style.width=`${n/ACTIVE_TASKS.length*100}%`;$('progressLabel').textContent=`${n} із ${ACTIVE_TASKS.length} задач розв’язано`;}
@@ -15,11 +15,19 @@ function renderSimulator(){
 }
 $('simBtn').onclick=()=>{
  const t=ACTIVE_TASKS[selected], inp=$('simInput').value.trim();
- if(topicNumber>=5&&topicNumber<=8){
+ if(topicNumber>=5&&topicNumber<=12){
  try{
   const t=ACTIVE_TASKS[selected], inp=$('simInput').value;
   let lines=[];
-  if(topicNumber===5){
+  if(topicNumber>=9){
+   const a=inp.trim().split(/\s+/).map(Number);
+   lines.push('Алгоритм: '+t.skill);
+   lines.push('Початкові дані: '+inp.trim().replace(/\n/g,' | ').slice(0,180));
+   if(topicNumber===9)lines.push('Порівняйте можливі локальні вибори та їхні наслідки.');
+   if(topicNumber===10)lines.push('Порахуйте, скільки операцій потрібно для різних N.');
+   if(topicNumber===11)lines.push('Визначте стан dp та залежність від попередніх станів.');
+   if(topicNumber===12)lines.push('Намалюйте вершини та ребра, а потім пройдіть граф по шарах.');
+  }else if(topicNumber===5){
    const arr=inp.trim().split(/\s+/).map(Number), a=arr.slice(selected===1||selected===3||selected===4?2:1);
    lines.push('Вхідний список: '+a.join(', '));
    if(selected===0||selected===2)lines.push('Упорядковані значення: '+[...a].sort((x,y)=>x-y).join(', '));
