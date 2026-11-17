@@ -1,5 +1,5 @@
 const topicNumber=Number(new URLSearchParams(location.search).get('topic')||1);
-const ACTIVE_TASKS=topicNumber===3?TASKS3:topicNumber===2?TASKS2:TASKS;
+const ACTIVE_TASKS=topicNumber===4?TASKS4:topicNumber===3?TASKS3:topicNumber===2?TASKS2:TASKS;
 const STORE_SUFFIX='-topic'+topicNumber;
 let selected=0, busy=false;const $=id=>document.getElementById(id);const saved=()=>{try{return JSON.parse(localStorage.getItem('buch-solutions-v1'+STORE_SUFFIX)||'{}')}catch{return {}}};const completed=()=>{try{return JSON.parse(localStorage.getItem('buch-completed-v1'+STORE_SUFFIX)||'{}')}catch{return {}}};const setStorage=(key,obj)=>{try{localStorage.setItem(key,JSON.stringify(obj))}catch{}};
 function renderMenu(){const c=completed();$('taskMenu').innerHTML='';ACTIVE_TASKS.forEach((t,i)=>{const b=document.createElement('button');b.className='taskmenuitem '+(selected===i?'active':'');b.textContent=`${c[t.id]?'✓':'○'}  ${i+1}. ${t.name}`;b.onclick=()=>select(i);$('taskMenu').append(b)});const n=ACTIVE_TASKS.filter(t=>c[t.id]).length;$('progressFill').style.width=`${n/ACTIVE_TASKS.length*100}%`;$('progressLabel').textContent=`${n} із ${ACTIVE_TASKS.length} задач розв’язано`;}
@@ -15,7 +15,20 @@ function renderSimulator(){
 }
 $('simBtn').onclick=()=>{
  const t=ACTIVE_TASKS[selected], inp=$('simInput').value.trim();
- if(topicNumber===3){
+ if(topicNumber===4){
+ try{
+  const parts=inp.split(/\s+/).map(Number);let a,k;
+  if(selected===2){const n=parts[0];k=parts[1];a=parts.slice(2,2+n)}else{const n=parts[0];a=parts.slice(1,1+n)}
+  if(!a.length||a.some(v=>!Number.isFinite(v)))throw Error('Некоректні дані');
+  const steps=[];let answer;
+  if(selected===0){let sum=0;a.forEach((v,i)=>{sum+=v;if(i<12)steps.push(`Пакет ${i+1}: +${v}, сума ${sum}`)});answer=sum}
+  if(selected===1){let max=a[0];a.forEach((v,i)=>{max=Math.max(max,v);if(i<12)steps.push(`Результат ${v}, рекорд ${max}`)});answer=max}
+  if(selected===2){let count=0;a.forEach((v,i)=>{if(v>=k)count++;if(i<12)steps.push(`${v} ≥ ${k}: ${v>=k?'так':'ні'}, перепусток ${count}`)});answer=count}
+  if(selected===3){let count=0;for(let i=1;i<a.length;i++){if(a[i]>a[i-1])count++;if(i<=12)steps.push(`${a[i-1]} → ${a[i]}: ${a[i]>a[i-1]?'збільшення':'ні'}, разом ${count}`)}answer=count}
+  if(selected===4){const seen=new Set();a.forEach((v,i)=>{seen.add(v);if(i<12)steps.push(`Номер ${v}: різних ${seen.size}`)});answer=seen.size}
+  $('simOutput').textContent=steps.join('\n')+(steps.length?'\n':'')+'Відповідь: '+answer;
+ }catch(e){$('simOutput').textContent='Перевірте формат вхідних даних.'}
+ }else if(topicNumber===3){
   try{const v=inp.split(/\s+/).map(Number),x=v[0],y=v[1];let lines=[];
    if(selected===0){const r=x%y;lines=[`${x} = ${Math.floor(x/y)} × ${y} + ${r}`,`Остача: ${r}`];}
    if(selected===1){const a=x,b=y;let p=a,q=b;while(q!==0){lines.push(`${p} = ${Math.floor(p/q)} × ${q} + ${p%q}`);[p,q]=[q,p%q];}lines.push(`НСД(${a}, ${b}) = ${p}`);}

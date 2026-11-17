@@ -9,3 +9,9 @@
 .simfields label{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:750;color:#4b6886;flex:1;min-width:110px}
 .simnumber{padding:9px;border:1px solid #c9dbeb;border-radius:9px;max-width:100%;width:100%;font:16px Consolas,monospace;background:white}
 .simoutput{background:white;border:1px dashed #b8d3eb;padding:13px;margin-top:12px;border-radius:10px;white-space:pre-wrap;overflow-wrap:anywhere;color:#1d527f;font-weight:650;font-size:14px}
+
+/* Компактний перехід від вступу до розділів: прибрано зайній порожній відступ */
+.hero{padding-bottom:10px}
+.section#topics{padding-top:12px}
+.section#topics .sectionhead h2{margin-top:4px}
+@media(max-width:900px){.hero{padding-bottom:12px}.section#topics{padding-top:8px}}
