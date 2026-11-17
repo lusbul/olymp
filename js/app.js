@@ -1,5 +1,5 @@
 const topicNumber=Number(new URLSearchParams(location.search).get('topic')||1);
-const ACTIVE_TASKS=topicNumber===12?TASKS12:topicNumber===11?TASKS11:topicNumber===10?TASKS10:topicNumber===9?TASKS9:topicNumber===8?TASKS8:topicNumber===7?TASKS7:topicNumber===6?TASKS6:topicNumber===5?TASKS5:topicNumber===4?TASKS4:topicNumber===3?TASKS3:topicNumber===2?TASKS2:TASKS;
+const ACTIVE_TASKS=topicNumber===16?TASKS16:topicNumber===15?TASKS15:topicNumber===14?TASKS14:topicNumber===13?TASKS13:topicNumber===12?TASKS12:topicNumber===11?TASKS11:topicNumber===10?TASKS10:topicNumber===9?TASKS9:topicNumber===8?TASKS8:topicNumber===7?TASKS7:topicNumber===6?TASKS6:topicNumber===5?TASKS5:topicNumber===4?TASKS4:topicNumber===3?TASKS3:topicNumber===2?TASKS2:TASKS;
 const STORE_SUFFIX='-topic'+topicNumber;
 let selected=0, busy=false;const $=id=>document.getElementById(id);const saved=()=>{try{return JSON.parse(localStorage.getItem('buch-solutions-v1'+STORE_SUFFIX)||'{}')}catch{return {}}};const completed=()=>{try{return JSON.parse(localStorage.getItem('buch-completed-v1'+STORE_SUFFIX)||'{}')}catch{return {}}};const setStorage=(key,obj)=>{try{localStorage.setItem(key,JSON.stringify(obj))}catch{}};
 function renderMenu(){const c=completed();$('taskMenu').innerHTML='';ACTIVE_TASKS.forEach((t,i)=>{const b=document.createElement('button');b.className='taskmenuitem '+(selected===i?'active':'');b.textContent=`${c[t.id]?'✓':'○'}  ${i+1}. ${t.name}`;b.onclick=()=>select(i);$('taskMenu').append(b)});const n=ACTIVE_TASKS.filter(t=>c[t.id]).length;$('progressFill').style.width=`${n/ACTIVE_TASKS.length*100}%`;$('progressLabel').textContent=`${n} із ${ACTIVE_TASKS.length} задач розв’язано`;}
@@ -15,7 +15,7 @@ function renderSimulator(){
 }
 $('simBtn').onclick=()=>{
  const t=ACTIVE_TASKS[selected], inp=$('simInput').value.trim();
- if(topicNumber>=5&&topicNumber<=12){
+ if(topicNumber>=5&&topicNumber<=16){
  try{
   const t=ACTIVE_TASKS[selected], inp=$('simInput').value;
   let lines=[];
@@ -27,6 +27,10 @@ $('simBtn').onclick=()=>{
    if(topicNumber===10)lines.push('Порахуйте, скільки операцій потрібно для різних N.');
    if(topicNumber===11)lines.push('Визначте стан dp та залежність від попередніх станів.');
    if(topicNumber===12)lines.push('Намалюйте вершини та ребра, а потім пройдіть граф по шарах.');
+   if(topicNumber===13)lines.push('Порівняйте порядок додавання та вилучення елементів.');
+   if(topicNumber===14)lines.push('Використайте координати та геометричні формули.');
+   if(topicNumber===15)lines.push('Уявіть поле як рядки та стовпці.');
+   if(topicNumber===16)lines.push('Обирайте алгоритм відповідно до умови задачі.');
   }else if(topicNumber===5){
    const arr=inp.trim().split(/\s+/).map(Number), a=arr.slice(selected===1||selected===3||selected===4?2:1);
    lines.push('Вхідний список: '+a.join(', '));
