@@ -1,5 +1,5 @@
 const topicNumber=Number(new URLSearchParams(location.search).get('topic')||1);
-const ACTIVE_TASKS=topicNumber===4?TASKS4:topicNumber===3?TASKS3:topicNumber===2?TASKS2:TASKS;
+const ACTIVE_TASKS=topicNumber===8?TASKS8:topicNumber===7?TASKS7:topicNumber===6?TASKS6:topicNumber===5?TASKS5:topicNumber===4?TASKS4:topicNumber===3?TASKS3:topicNumber===2?TASKS2:TASKS;
 const STORE_SUFFIX='-topic'+topicNumber;
 let selected=0, busy=false;const $=id=>document.getElementById(id);const saved=()=>{try{return JSON.parse(localStorage.getItem('buch-solutions-v1'+STORE_SUFFIX)||'{}')}catch{return {}}};const completed=()=>{try{return JSON.parse(localStorage.getItem('buch-completed-v1'+STORE_SUFFIX)||'{}')}catch{return {}}};const setStorage=(key,obj)=>{try{localStorage.setItem(key,JSON.stringify(obj))}catch{}};
 function renderMenu(){const c=completed();$('taskMenu').innerHTML='';ACTIVE_TASKS.forEach((t,i)=>{const b=document.createElement('button');b.className='taskmenuitem '+(selected===i?'active':'');b.textContent=`${c[t.id]?'✓':'○'}  ${i+1}. ${t.name}`;b.onclick=()=>select(i);$('taskMenu').append(b)});const n=ACTIVE_TASKS.filter(t=>c[t.id]).length;$('progressFill').style.width=`${n/ACTIVE_TASKS.length*100}%`;$('progressLabel').textContent=`${n} із ${ACTIVE_TASKS.length} задач розв’язано`;}
@@ -15,7 +15,28 @@ function renderSimulator(){
 }
 $('simBtn').onclick=()=>{
  const t=ACTIVE_TASKS[selected], inp=$('simInput').value.trim();
- if(topicNumber===4){
+ if(topicNumber>=5&&topicNumber<=8){
+ try{
+  const t=ACTIVE_TASKS[selected], inp=$('simInput').value;
+  let lines=[];
+  if(topicNumber===5){
+   const arr=inp.trim().split(/\s+/).map(Number), a=arr.slice(selected===1||selected===3||selected===4?2:1);
+   lines.push('Вхідний список: '+a.join(', '));
+   if(selected===0||selected===2)lines.push('Упорядковані значення: '+[...a].sort((x,y)=>x-y).join(', '));
+   if(selected===1||selected===3||selected===4)lines.push('Ціль: '+arr[1]);
+   lines.push('Порівняйте елементи та знайдіть відповідь у власній програмі.');
+  }else if(topicNumber===6){
+   const str=inp.split('\n')[0];lines.push('Символів у першому рядку: '+str.length);lines.push('Перші символи: '+[...str].slice(0,15).join(' · '));
+   lines.push('Переберіть позиції рядка та перевірте потрібну умову.');
+  }else if(topicNumber===7){
+   const a=inp.trim().split(/\s+/);lines.push('Унікальні токени: '+new Set(a.slice(1)).size);lines.push('Для підрахунку частот використовуйте словник.');
+  }else{
+   const n=Number(inp.trim());lines.push('Початкове N: '+n);for(let i=0;i<Math.min(n,8);i++)lines.push('Крок '+(i+1)+': дослідіть можливі вибори');
+   lines.push('Спробуйте сформулювати базовий випадок і перехід.');
+  }
+  $('simOutput').textContent=lines.join('\n');
+ }catch(e){$('simOutput').textContent='Перевірте вхідні дані.'}
+ }else if(topicNumber===4){
  try{
   const parts=inp.split(/\s+/).map(Number);let a,k;
   if(selected===2){const n=parts[0];k=parts[1];a=parts.slice(2,2+n)}else{const n=parts[0];a=parts.slice(1,1+n)}
