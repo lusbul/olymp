@@ -1,8 +1,8 @@
 const topicNumber=Number(new URLSearchParams(location.search).get('topic')||1);
-const ACTIVE_TASKS=topicNumber===2?TASKS2:TASKS;
+const ACTIVE_TASKS=topicNumber===3?TASKS3:topicNumber===2?TASKS2:TASKS;
 const STORE_SUFFIX='-topic'+topicNumber;
 let selected=0, busy=false;const $=id=>document.getElementById(id);const saved=()=>{try{return JSON.parse(localStorage.getItem('buch-solutions-v1'+STORE_SUFFIX)||'{}')}catch{return {}}};const completed=()=>{try{return JSON.parse(localStorage.getItem('buch-completed-v1'+STORE_SUFFIX)||'{}')}catch{return {}}};const setStorage=(key,obj)=>{try{localStorage.setItem(key,JSON.stringify(obj))}catch{}};
-function renderMenu(){const c=completed();$('taskMenu').innerHTML='';ACTIVE_TASKS.forEach((t,i)=>{const b=document.createElement('button');b.className='taskmenuitem '+(selected===i?'active':'');b.textContent=`${c[t.id]?'✓':'○'}  ${i+1}. ${t.name}`;b.onclick=()=>select(i);$('taskMenu').append(b)});const n=ACTIVE_TASKS.filter(t=>c[t.id]).length;$('progressFill').style.width=`${n/ACTIVE_ACTIVE_TASKS.length*100}%`;$('progressLabel').textContent=`${n} із ${ACTIVE_TASKS.length} задач розв’язано`;}
+function renderMenu(){const c=completed();$('taskMenu').innerHTML='';ACTIVE_TASKS.forEach((t,i)=>{const b=document.createElement('button');b.className='taskmenuitem '+(selected===i?'active':'');b.textContent=`${c[t.id]?'✓':'○'}  ${i+1}. ${t.name}`;b.onclick=()=>select(i);$('taskMenu').append(b)});const n=ACTIVE_TASKS.filter(t=>c[t.id]).length;$('progressFill').style.width=`${n/ACTIVE_TASKS.length*100}%`;$('progressLabel').textContent=`${n} із ${ACTIVE_TASKS.length} задач розв’язано`;}
 
 function renderSimulator(){
  const t=ACTIVE_TASKS[selected], holder=$('simFields');
@@ -15,7 +15,16 @@ function renderSimulator(){
 }
 $('simBtn').onclick=()=>{
  const t=ACTIVE_TASKS[selected], inp=$('simInput').value.trim();
- if(topicNumber===2){
+ if(topicNumber===3){
+  try{const v=inp.split(/\s+/).map(Number),x=v[0],y=v[1];let lines=[];
+   if(selected===0){const r=x%y;lines=[`${x} = ${Math.floor(x/y)} × ${y} + ${r}`,`Остача: ${r}`];}
+   if(selected===1){const a=x,b=y;let p=a,q=b;while(q!==0){lines.push(`${p} = ${Math.floor(p/q)} × ${q} + ${p%q}`);[p,q]=[q,p%q];}lines.push(`НСД(${a}, ${b}) = ${p}`);}
+   if(selected===2){let prime=x>=2;for(let d=2;d*d<=x;d++){if(d<=15)lines.push(`Перевіряємо дільник ${d}: ${x%d===0?"ділиться":"не ділиться"}`);if(x%d===0){prime=false;break;}}lines.push(prime?"Число просте":"Число складене або менше 2");}
+   if(selected===3){const k=Math.ceil(x/y);lines=[`${x} предметів, по ${y} у коробці`,`Повних коробок: ${Math.floor(x/y)}`,`Потрібно коробок: ${k}`];}
+   if(selected===4){const a=x,b=y;const g=(p,q)=>q?g(q,p%q):p;lines=[`НСД(${a}, ${b}) = ${g(a,b)}`,`НСК = (${a} × ${b}) / ${g(a,b)} = ${a/g(a,b)*b}`];}
+   $("simOutput").textContent=lines.join("\n");
+  }catch(e){$("simOutput").textContent="Перевірте вхідні дані.";}
+ }else if(topicNumber===2){
   const a=inp.split(/\s+/).map(Number),n=a[0];let steps=[],ans='';
   if(selected===0){let sum=0;for(const [i,v] of a.slice(1,1+n).entries()){sum+=v;if(i<12)steps.push(`Крок ${i+1}: +${v}, сума ${sum}`)}ans=`Усього: ${sum}`;}
   if(selected===1){let d=0,sum=0;while(sum<n&&d<50000){d++;sum+=d;if(d<=12)steps.push(`День ${d}: сума ${sum}`)}ans=`Потрібно днів: ${d}`;}
